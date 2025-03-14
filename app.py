@@ -47,7 +47,11 @@ prompt = ChatPromptTemplate.from_template(
 # Initialize the embeddings model
 @st.cache_resource
 def init_embeddings():
-    return HuggingFaceBgeEmbeddings(model_name="all-MiniLM-L6-v2")
+    try:
+        return HuggingFaceBgeEmbeddings(model_name="all-MiniLM-L6-v2")
+    except ImportError as e:
+        st.error(f"ImportError: {str(e)}. Please ensure that all required dependencies are installed.")
+        st.stop()
 
 embeddings = init_embeddings()
 
@@ -124,8 +128,7 @@ if user_prompt:
             response = retrieval_chain.invoke({'input': user_prompt})
             process_time = time.process_time() - start
 
-            # Check if the response contains an answer
-            if 'answer' in response and response['answer'].strip():
+            if response.get('answer'):
                 st.write(response['answer'])
             else:
                 # Fallback to using the Gemini model for an answer if no answer is found in the documents
