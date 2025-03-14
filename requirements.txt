@@ -5,3 +5,4 @@ langchain-community
 langchain_groq
 faiss-cpu
 python-dotenv
+sentence-transformers
